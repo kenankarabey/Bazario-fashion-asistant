@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bazario Fashion Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f6fa;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      background: #ffffff;
+      border-right: 1px solid #eaeaea;
+      padding: 20px 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .menu-header {
+      padding: 0 20px 20px 20px;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .menu-toggle {
+      font-size: 0.9rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .nav-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #333;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: #f8f5ff;
+      color: #8f2fff;
+    }
+
+    .nav-item.active {
+      background: #f3e6ff;
+      color: #8f2fff;
+      border-left: 3px solid #8f2fff;
+    }
+
+    .nav-item i {
+      font-size: 1.2rem;
+    }
+
+    /* Main Chat Area */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .chat-header {
+      padding: 20px 30px;
+      background: #ffffff;
+      border-bottom: 1px solid #eaeaea;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-title h1 {
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    .chat-title p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .new-chat-btn {
+      background: #8f2fff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .new-chat-btn:hover {
+      background: #7a1ee6;
+      transform: translateY(-1px);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .message {
+      max-width: 80%;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3e6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar i {
+      color: #8f2fff;
+      font-size: 1.2rem;
+    }
+
+    .message-content {
+      background: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      color: #333;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .user .message-content {
+      background: #8f2fff;
+      color: white;
+    }
+
+    .chat-input {
+      padding: 20px 30px;
+      background: #ffffff;
+      border-top: 1px solid #eaeaea;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 24px;
+      padding: 8px 20px;
+    }
+
+    .input-wrapper input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 8px 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .input-wrapper button {
+      background: #8f2fff;
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .input-wrapper button:hover {
+      background: #7a1ee6;
+      transform: scale(1.05);
+    }
+
+    /* Right Sidebar */
+    .chat-info {
+      background: #ffffff;
+      border-left: 1px solid #eaeaea;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .chat-info h2 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .chat-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 12px;
+      background: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+      color: #333;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn:hover {
+      background: #f3e6ff;
+      color: #8f2fff;
+      border-color: #e0d0ff;
+    }
+
+    /* Dark Mode Toggle */
+    .dark-mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dark-mode-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      body {
+        grid-template-columns: 240px 1fr;
+      }
+      .chat-info {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="menu-header">
+      <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+        Menü Küçült
+      </div>
+    </div>
+    <nav>
+      
+      <a href="#" class="nav-item active">
+        <i class="fas fa-robot"></i>
+        Fashion Assistant
+      </a>  
+    </nav>
+  </div>
+
+  <!-- Main Chat Area -->
+  <main class="main-content">
+    <div class="chat-header">
+      <div class="chat-title">
+        <h1>Bazario Fashion Assistant</h1>
+        <p>Size moda konusunda yardımcı olabilirim</p>
+      </div>
+      <button class="new-chat-btn">
+        <i class="fas fa-plus"></i>
+        Yeni Sohbet
+      </button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot">
+        <div class="avatar">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+          Merhaba! Ben Bazario Fashion Assistant. Size nasıl yardımcı olabilirim?
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <div class="input-wrapper">
+        <input type="text" placeholder="Mesajınızı yazın..." id="messageInput">
+        <button id="sendButton">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right Sidebar -->
+  <div class="chat-info">
+    <h2>Sohbet Geçmişi</h2>
+    <div class="chat-actions">
+      <button class="action-btn">
+        <i class="fas fa-trash"></i>
+        Sohbeti Temizle
+      </button>
+      <button class="action-btn">
+        <i class="fas fa-download"></i>
+        Sohbeti İndir
+      </button>
+      <button class="action-btn">
+        <i class="fas fa-share"></i>
+        Sohbeti Paylaş
+      </button>
+    </div>
+  </div>
+
+  <!-- Dark Mode Toggle -->
+  <div class="dark-mode-toggle">
+    <i class="fas fa-moon"></i>
+  </div>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <script>
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatMessages = document.getElementById('chatMessages');
+    const darkModeToggle = document.querySelector('.dark-mode-toggle');
+
+    // Send message function
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      // Add user message
+      const userMessage = document.createElement('div');
+      userMessage.className = 'message user';
+      userMessage.innerHTML = `
+        <div class="avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="message-content">${message}</div>
+      `;
+      chatMessages.appendChild(userMessage);
+
+      // Clear input
+      messageInput.value = '';
+
+      // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Simulate bot response
+      setTimeout(() => {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'message bot';
+        botMessage.innerHTML = `
+          <div class="avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="message-content">Size nasıl yardımcı olabilirim?</div>
+        `;
+        chatMessages.appendChild(botMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Dark mode toggle
+    let isDarkMode = false;
+    darkModeToggle.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      document.body.style.background = isDarkMode ? '#1a1a1a' : '#f5f6fa';
+      document.querySelectorAll('.sidebar, .main-content, .chat-info, .message-content, .input-wrapper')
+        .forEach(el => {
+          el.style.background = isDarkMode ? '#2d2d2d' : '#ffffff';
+          el.style.color = isDarkMode ? '#ffffff' : '#333333';
+        });
+    });
+  </script>
+</body>
+</html> 
